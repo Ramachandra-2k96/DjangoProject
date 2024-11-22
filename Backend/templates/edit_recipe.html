@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Recipe - CulinaryCanvas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-orange-50 to-pink-50">
+    <div class="container px-4 py-8 mx-auto">
+        <div class="p-8 bg-white rounded-2xl shadow-lg animate__animated animate__fadeIn">
+            <h1 class="mb-6 text-3xl font-bold text-center text-gray-800">Edit Recipe</h1>
+
+            <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+
+                <!-- Basic Information -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Recipe Details</h3>
+                    <input type="text" name="title" required value="{{ recipe.title }}"
+                           class="px-4 py-3 w-full rounded-lg border-2 border-gray-300"
+                           placeholder="Recipe title">
+                    <textarea name="description" required rows="3"
+                              class="px-4 py-3 w-full rounded-lg border-2 border-gray-300"
+                              placeholder="Recipe description">{{ recipe.description }}</textarea>
+                </div>
+
+                <!-- Recipe Details -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Cooking Information</h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <input type="number" name="servings" required value="{{ recipe.servings }}"
+                               class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                               placeholder="Number of servings">
+                        <input type="number" name="prep_time" required value="{{ recipe.prep_time }}"
+                               class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                               placeholder="Prep time (minutes)">
+                        <input type="number" name="calories" required value="{{ recipe.calories }}"
+                               class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                               placeholder="Calories per serving">
+                        <select name="difficulty" required
+                                class="px-4 py-3 rounded-lg border-2 border-gray-300">
+                            <option value="easy" {% if recipe.difficulty == 'easy' %}selected{% endif %}>Easy</option>
+                            <option value="medium" {% if recipe.difficulty == 'medium' %}selected{% endif %}>Intermediate</option>
+                            <option value="hard" {% if recipe.difficulty == 'hard' %}selected{% endif %}>Advanced</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Categories</h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Meal Types</label>
+                            <select name="meal_type" multiple required class="px-4 py-3 w-full rounded-lg border-2 border-gray-300">
+                                {% for meal_type in meal_types %}
+                                    <option value="{{ meal_type.id }}" 
+                                            {% if meal_type.id in selected_meal_types %}selected{% endif %}>
+                                        {{ meal_type.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Cuisines</label>
+                            <select name="cuisine" multiple required class="px-4 py-3 w-full rounded-lg border-2 border-gray-300">
+                                {% for cuisine in cuisines %}
+                                    <option value="{{ cuisine.id }}"
+                                            {% if cuisine.id in selected_cuisines %}selected{% endif %}>
+                                        {{ cuisine.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block mb-2 text-sm font-medium text-gray-700">Dietary Restrictions</label>
+                            <select name="dietary_restrictions" multiple required class="px-4 py-3 w-full rounded-lg border-2 border-gray-300">
+                                {% for restriction in dietary_restrictions %}
+                                    <option value="{{ restriction.id }}"
+                                            {% if restriction.id in selected_restrictions %}selected{% endif %}>
+                                        {{ restriction.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ingredients -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Ingredients</h3>
+                    <div id="ingredients-container" class="space-y-4">
+                        {% for ingredient in ingredients %}
+                        <div class="grid grid-cols-5 gap-4">
+                            <input type="text" name="ingredient_name[]" required value="{{ ingredient.name }}"
+                                   class="col-span-2 px-4 py-3 rounded-lg border-2 border-gray-300"
+                                   placeholder="Ingredient name">
+                            <input type="text" name="ingredient_quantity[]" required value="{{ ingredient.quantity }}"
+                                   class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                                   placeholder="Amount">
+                            <input type="text" name="ingredient_unit[]" value="{{ ingredient.unit }}"
+                                   class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                                   placeholder="Unit">
+                            <button type="button" onclick="removeIngredient(this)"
+                                    class="px-4 py-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                                Remove
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" onclick="addIngredient()"
+                            class="px-4 py-2 text-orange-500 rounded-lg border border-orange-500 hover:bg-orange-50">
+                        Add Another Ingredient
+                    </button>
+                </div>
+
+                <!-- Instructions -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Instructions</h3>
+                    <div id="instructions-container" class="space-y-4">
+                        {% for instruction in instructions %}
+                        <div class="flex relative items-center">
+                            <div class="absolute top-0 left-0 mt-3 ml-3 text-gray-400">Step {{ instruction.step_number }}</div>
+                            <textarea name="instructions[]" required rows="2"
+                                      class="block pl-20 w-full rounded-lg border-2 border-gray-300"
+                                      placeholder="Describe this step...">{{ instruction.description }}</textarea>
+                            <button type="button" onclick="removeInstruction(this)"
+                                    class="px-4 py-2 ml-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                                Remove
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" onclick="addInstruction()"
+                            class="px-4 py-2 text-orange-500 rounded-lg border border-orange-500 hover:bg-orange-50">
+                        Add Another Step
+                    </button>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-semibold text-gray-700">Recipe Image</h3>
+                    {% if recipe.image %}
+                        <div class="mb-4">
+                            <p class="mb-2 text-sm text-gray-600">Current image:</p>
+                            <img src="{{ recipe.image.url }}" alt="{{ recipe.title }}" class="object-cover w-32 h-32 rounded-lg">
+                        </div>
+                    {% endif %}
+                    <input type="file" name="image" accept="image/*"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="flex gap-4 justify-end">
+                    <a href="{% url 'home' %}" 
+                       class="px-6 py-3 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+                        Cancel
+                    </a>
+                    <button type="submit"
+                            class="px-6 py-3 text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg hover:from-orange-600 hover:to-orange-700">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function addIngredient() {
+            const container = document.getElementById('ingredients-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'grid grid-cols-5 gap-4';
+            newRow.innerHTML = `
+                <input type="text" name="ingredient_name[]" required
+                       class="col-span-2 px-4 py-3 rounded-lg border-2 border-gray-300"
+                       placeholder="Ingredient name">
+                <input type="text" name="ingredient_quantity[]" required
+                       class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                       placeholder="Amount">
+                <input type="text" name="ingredient_unit[]"
+                       class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                       placeholder="Unit">
+                <button type="button" onclick="removeIngredient(this)"
+                        class="px-4 py-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function removeIngredient(button) {
+            const container = document.getElementById('ingredients-container');
+            if (container.children.length > 1) {
+                button.closest('.grid').remove();
+            }
+        }
+
+        function addInstruction() {
+            const container = document.getElementById('instructions-container');
+            const stepNumber = container.children.length + 1;
+            const newRow = document.createElement('div');
+            newRow.className = 'relative flex items-center';
+            newRow.innerHTML = `
+                <div class="absolute top-0 left-0 mt-3 ml-3 text-gray-400">Step ${stepNumber}</div>
+                <textarea name="instructions[]" required rows="2"
+                          class="block pl-20 w-full rounded-lg border-2 border-gray-300"
+                          placeholder="Describe this step..."></textarea>
+                <button type="button" onclick="removeInstruction(this)"
+                        class="px-4 py-2 ml-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function removeInstruction(button) {
+            const container = document.getElementById('instructions-container');
+            if (container.children.length > 1) {
+                button.closest('.relative').remove();
+            }
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,177 @@
+[
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "pasta_lover",
+            "email": "pasta_lover@example.com",
+            "password": "pbkdf2_sha256$600000$your_hashed_password_here",
+            "is_active": true,
+            "date_joined": "2024-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "auth.user",
+        "pk": 2,
+        "fields": {
+            "username": "health_nut",
+            "email": "health_nut@example.com",
+            "password": "pbkdf2_sha256$600000$your_hashed_password_here",
+            "is_active": true,
+            "date_joined": "2024-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "Recipie.mealtype",
+        "pk": 1,
+        "fields": {
+            "name": "Breakfast"
+        }
+    },
+    {
+        "model": "Recipie.mealtype",
+        "pk": 2,
+        "fields": {
+            "name": "Lunch"
+        }
+    },
+    {
+        "model": "Recipie.mealtype",
+        "pk": 3,
+        "fields": {
+            "name": "Dinner"
+        }
+    },
+    {
+        "model": "Recipie.mealtype",
+        "pk": 4,
+        "fields": {
+            "name": "Dessert"
+        }
+    },
+    {
+        "model": "Recipie.mealtype",
+        "pk": 5,
+        "fields": {
+            "name": "Snack"
+        }
+    },
+    {
+        "model": "Recipie.cuisine",
+        "pk": 1,
+        "fields": {
+            "name": "Italian"
+        }
+    },
+    {
+        "model": "Recipie.cuisine",
+        "pk": 2,
+        "fields": {
+            "name": "International"
+        }
+    },
+    {
+        "model": "Recipie.cuisine",
+        "pk": 3,
+        "fields": {
+            "name": "French"
+        }
+    },
+    {
+        "model": "Recipie.cuisine",
+        "pk": 4,
+        "fields": {
+            "name": "Indian"
+        }
+    },
+    {
+        "model": "Recipie.cuisine",
+        "pk": 5,
+        "fields": {
+            "name": "Japanese"
+        }
+    },
+    {
+        "model": "Recipie.cuisine",
+        "pk": 6,
+        "fields": {
+            "name": "Greek"
+        }
+    },
+    {
+        "model": "Recipie.cuisine",
+        "pk": 7,
+        "fields": {
+            "name": "American"
+        }
+    },
+    {
+        "model": "Recipie.dietaryrestriction",
+        "pk": 1,
+        "fields": {
+            "name": "Vegetarian"
+        }
+    },
+    {
+        "model": "Recipie.dietaryrestriction",
+        "pk": 2,
+        "fields": {
+            "name": "Vegan"
+        }
+    },
+    {
+        "model": "Recipie.dietaryrestriction",
+        "pk": 3,
+        "fields": {
+            "name": "Contains Dairy"
+        }
+    },
+    {
+        "model": "Recipie.dietaryrestriction",
+        "pk": 4,
+        "fields": {
+            "name": "Contains Fish"
+        }
+    },
+    {
+        "model": "Recipie.recipe",
+        "pk": 1,
+        "fields": {
+            "title": "Creamy Garlic Pasta",
+            "description": "A delicious Italian pasta dish with creamy garlic sauce and fresh herbs.",
+            "servings": 4,
+            "prep_time": 30,
+            "calories": 520,
+            "rating": 4.8,
+            "image": "recipe_images/th.jpeg",
+            "author": 1,
+            "difficulty": "medium",
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "Recipie.mealtype_recipes",
+        "pk": 1,
+        "fields": {
+            "mealtype": 3,
+            "recipe": 1
+        }
+    },
+    {
+        "model": "Recipie.cuisine_recipes",
+        "pk": 1,
+        "fields": {
+            "cuisine": 1,
+            "recipe": 1
+        }
+    },
+    {
+        "model": "Recipie.dietaryrestriction_recipes",
+        "pk": 1,
+        "fields": {
+            "dietaryrestriction": 1,
+            "recipe": 1
+        }
+    }
+]

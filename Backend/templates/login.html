@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CulinaryCanvas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body class="flex overflow-hidden justify-center items-center p-4 min-h-screen bg-gradient-to-br from-orange-100 via-red-100 to-pink-100">
+    
+    <!-- Particle Animation -->
+    <div id="particles"></div>
+
+    <!-- Main Container -->
+    <div class="flex overflow-hidden w-full max-w-5xl rounded-3xl shadow-2xl animate__animated animate__zoomIn">
+        
+        <!-- Left Side - Login Form -->
+        <div class="relative p-10 w-full bg-white md:w-3/5">
+            <div class="mb-10 text-center">
+                <h2 class="mb-3 text-5xl font-bold gradient-text animate__animated animate__fadeInDown">Welcome Back, Chef!</h2>
+                <p class="text-lg text-gray-600 animate__animated animate__fadeInUp">Ready to spice up your culinary journey?</p>
+            </div>
+
+            <form class="space-y-8" method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="relative animate__animated animate__fadeInLeft animate__delay-0s">
+                    <label class="block mb-2 text-lg text-gray-700">Email</label>
+                    <input type="email" name="email" required class="px-5 py-4 w-full text-lg rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200" 
+                           placeholder="your.email@example.com">
+                    <span class="absolute right-4 top-12 text-orange-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </span>
+                </div>
+
+                <div class="relative animate__animated animate__fadeInLeft animate__delay-1s">
+                    <label class="block mb-2 text-lg text-gray-700">Password</label>
+                    <input type="password" name="password" required class="px-5 py-4 w-full text-lg rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200" 
+                           placeholder="••••••••">
+                    <span class="absolute right-4 top-12 text-orange-500 cursor-pointer">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                    </span>
+                </div>
+                <button type="submit" class="py-4 w-full text-xl font-bold text-white bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-lg shadow-lg transition-all duration-300 transform hover:from-orange-600 hover:via-red-600 hover:to-pink-600 hover:scale-105 animate__animated animate__fadeInUp animate__delay-2s hover:shadow-xl">
+                    Sign In & Start Cooking
+                </button>
+
+                <div class="text-lg text-center text-gray-600 animate__animated animate__fadeInUp animate__delay-3s">
+                    New to CulinaryCanvas? 
+                    <a href="/signup" class="font-semibold text-orange-500 hover:text-orange-600 hover:underline">Create an Account</a>
+                </div>
+            </form>
+
+            <!-- Social Login Options -->
+            <div class="mt-8 text-center">
+                <p class="mb-4 text-gray-600">Or sign in with</p>
+                <div class="flex justify-center space-x-4">
+                    <button class="p-2 text-white bg-blue-600 rounded-full transition-colors hover:bg-blue-700">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                    </button>
+                    <button class="p-2 text-white bg-blue-400 rounded-full transition-colors hover:bg-blue-500">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+                    </button>
+                    <button class="p-2 text-white bg-red-600 rounded-full transition-colors hover:bg-red-700">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Decorative -->
+        <div class="hidden overflow-hidden relative flex-col justify-center items-center p-12 w-2/5 bg-gradient-to-br from-orange-400 via-red-500 to-pink-500 md:flex">
+            <div class="absolute inset-0 bg-black opacity-10"></div>
+            <div class="relative z-10 text-center text-white">
+                <lottie-player 
+                    src="https://assets2.lottiefiles.com/private_files/lf30_ajzyv37m.json"
+                    background="transparent"
+                    speed="1"
+                    class="mx-auto w-80 h-80 floating"
+                    loop
+                    autoplay>
+                </lottie-player>
+                
+                <div class="mt-10">
+                    <h3 class="mb-6 text-4xl font-bold">Taste the Adventure</h3>
+                    <p class="mb-8 text-xl opacity-90">Join our vibrant community of food lovers and embark on a flavorful journey of culinary discovery</p>
+                    <a href="/viewrecipie" class="inline-block px-8 py-3 font-semibold text-orange-500 bg-white rounded-full shadow-lg transition-all duration-300 transform hover:bg-orange-100 hover:scale-105 hover:shadow-xl">
+                        Explore Recipes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Decorative Elements -->
+            <div class="absolute top-10 right-10 w-32 h-32 rounded-full bg-white/10 floating"></div>
+            <div class="absolute bottom-10 left-10 w-24 h-24 rounded-full bg-white/10 floating" style="animation-delay: -1s"></div>
+            <div class="absolute top-1/2 left-1/4 w-16 h-16 rounded-full bg-white/10 floating" style="animation-delay: -2s"></div>
+        </div>
+    </div>
+
+    <script>
+        // Particle animation
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.width = `${Math.random() * 10 + 5}px`;
+            particle.style.height = particle.style.width;
+            particle.style.background = `hsl(${Math.random() * 60 + 10}, 100%, 75%)`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = `${Math.random() * 100}vh`;
+            particlesContainer.appendChild(particle);
+
+            gsap.to(particle, {
+                x: `random(-100, 100)`,
+                y: `random(-100, 100)`,
+                duration: `random(3, 6)`,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut'
+            });
+        }
+
+        // Password visibility toggle
+        const passwordInput = document.querySelector('input[type="password"]');
+        const passwordToggle = passwordInput.nextElementSibling;
+        passwordToggle.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            passwordToggle.innerHTML = type === 'password' ? 
+                '<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>' :
+                '<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" /></svg>';
+        });
+    </script>
+</body>
+{% if messages %}
+<div class="fixed top-4 right-4 z-50">
+    {% for message in messages %}
+    <div class="animate__animated animate__fadeInRight mb-4 p-4 rounded-lg shadow-lg {% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} text-white">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+</html>

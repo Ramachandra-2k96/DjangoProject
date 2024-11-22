@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Share Your Recipe - CulinaryCanvas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .gradient-text {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        body {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+</head>
+<body class="flex overflow-hidden justify-center items-center p-4 min-h-screen bg-gradient-to-br from-orange-100 via-red-100 to-pink-100">
+    
+    <!-- Particle Animation -->
+    <div id="particles"></div>
+
+    <!-- Main Container -->
+    <div x-data="recipeForm()" 
+         class="flex overflow-hidden flex-col w-full max-w-6xl rounded-3xl shadow-2xl animate__animated animate__zoomIn md:flex-row">
+        
+        <!-- Left Side - Recipe Form -->
+        <div class="overflow-y-auto relative p-6 w-full max-h-screen bg-white md:p-10 md:w-3/5">
+            <div class="mb-8 text-center md:mb-10">
+                <h2 class="mb-3 text-3xl font-bold gradient-text animate__animated animate__fadeInDown md:text-5xl">Share Your Culinary Masterpiece</h2>
+                <p class="text-base text-gray-600 animate__animated animate__fadeInUp md:text-lg">Let's spice up the community with your unique recipe!</p>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" class="space-y-6 md:space-y-8" action="{% url 'add_recipe' %}">
+                {% csrf_token %}
+                <!-- Basic Information -->
+                <div class="space-y-4 animate__animated animate__fadeInLeft">
+                    <h3 class="text-xl font-semibold text-gray-700 md:text-2xl">Recipe Details</h3>
+                    <input type="text" name="title" required
+                           class="px-4 py-3 w-full text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg" 
+                           placeholder="Enter your recipe title">
+                    <textarea name="description" required rows="3"
+                              class="px-4 py-3 w-full text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg"
+                              placeholder="Describe your delicious creation"></textarea>
+                </div>
+
+                <!-- Recipe Details -->
+                <div class="space-y-4 animate__animated animate__fadeInLeft animate__delay-1s">
+                    <h3 class="text-xl font-semibold text-gray-700 md:text-2xl">Cooking Information</h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <input type="number" name="servings" min="1" required
+                               class="px-4 py-3 text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg"
+                               placeholder="Number of servings">
+                        <input type="number" name="prep_time" min="1" required
+                               class="px-4 py-3 text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg"
+                               placeholder="Prep time (minutes)">
+                        <input type="number" name="calories" min="1" required
+                               class="px-4 py-3 text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg"
+                               placeholder="Calories per serving">
+                        <select name="difficulty" required
+                                class="px-4 py-3 text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg">
+                            <option value="" disabled selected>Select difficulty</option>
+                            <option value="easy">Easy</option>
+                            <option value="medium">Intermediate</option>
+                            <option value="hard">Advanced</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Categories -->
+                <div class="space-y-4 animate__animated animate__fadeInLeft animate__delay-2s">
+                    <h3 class="text-xl font-semibold text-gray-700 md:text-2xl">Categories</h3>
+                    <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <select name="meal_type" multiple required
+                                class="px-4 py-3 text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg">
+                            {% for meal_type in meal_types %}
+                                <option value="{{ meal_type.id }}">{{ meal_type.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="cuisine" multiple required
+                                class="px-4 py-3 text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg">
+                            {% for cuisine in cuisines %}
+                                <option value="{{ cuisine.id }}">{{ cuisine.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <select name="dietary_restrictions" multiple
+                                class="px-4 py-3 text-base rounded-lg border-2 border-gray-300 transition-all focus:border-orange-500 focus:ring-4 focus:ring-orange-200 md:px-5 md:py-4 md:text-lg">
+                            {% for restriction in dietary_restrictions %}
+                                <option value="{{ restriction.id }}">{{ restriction.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Ingredients -->
+                <div class="space-y-4 animate__animated animate__fadeInLeft animate__delay-3s">
+                    <h3 class="text-xl font-semibold text-gray-700 md:text-2xl">Ingredients</h3>
+                    <div id="ingredients-container" class="space-y-4">
+                        <div class="grid grid-cols-5 gap-4">
+                            <input type="text" name="ingredient_name[]" required
+                                   class="col-span-2 px-4 py-3 rounded-lg border-2 border-gray-300"
+                                   placeholder="Ingredient name">
+                            <input type="text" name="ingredient_quantity[]" required
+                                   class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                                   placeholder="Amount">
+                            <input type="text" name="ingredient_unit[]"
+                                   class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                                   placeholder="Unit">
+                            <button type="button" onclick="removeIngredient(this)"
+                                    class="px-4 py-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addIngredient()"
+                            class="px-4 py-2 text-orange-500 rounded-lg border border-orange-500 hover:bg-orange-50">
+                        Add Another Ingredient
+                    </button>
+                </div>
+
+                <!-- Instructions -->
+                <div class="space-y-4 animate__animated animate__fadeInLeft animate__delay-4s">
+                    <h3 class="text-xl font-semibold text-gray-700 md:text-2xl">Instructions</h3>
+                    <div id="instructions-container" class="space-y-4">
+                        <div class="flex relative items-center">
+                            <div class="absolute top-0 left-0 mt-3 ml-3 text-gray-400">Step 1</div>
+                            <textarea name="instructions[]" required rows="2"
+                                      class="block pl-20 w-full rounded-lg border-2 border-gray-300"
+                                      placeholder="Describe this step..."></textarea>
+                            <button type="button" onclick="removeInstruction(this)"
+                                    class="px-4 py-2 ml-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addInstruction()"
+                            class="px-4 py-2 text-orange-500 rounded-lg border border-orange-500 hover:bg-orange-50">
+                        Add Another Step
+                    </button>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="space-y-4 animate__animated animate__fadeInLeft animate__delay-5s">
+                    <h3 class="text-xl font-semibold text-gray-700 md:text-2xl">Recipe Image</h3>
+                    <input type="file" name="image" accept="image/*" required
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100">
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-right">
+                    <button type="submit"
+                            class="px-6 py-3 text-white bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg hover:from-orange-600 hover:to-orange-700">
+                        Share Recipe
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Side - Decorative -->
+        <div class="hidden overflow-hidden relative flex-col justify-center items-center p-8 w-full bg-gradient-to-br from-orange-400 via-red-500 to-pink-500 md:flex md:w-2/5 md:p-12">
+            <div class="absolute inset-0 bg-black opacity-10"></div>
+            <div class="relative z-10 text-center text-white">
+                <lottie-player 
+                    src="https://assets2.lottiefiles.com/private_files/lf30_ajzyv37m.json"
+                    background="transparent"
+                    speed="1"
+                    class="mx-auto w-64 h-64 floating md:w-80 md:h-80"
+                    loop
+                    autoplay>
+                </lottie-player>
+                
+                <div class="mt-8 md:mt-10">
+                    <h3 class="mb-4 text-3xl font-bold md:mb-6 md:text-4xl">Share Your Culinary Magic</h3>
+                    <p class="mb-6 text-lg opacity-90 md:mb-8 md:text-xl">Join our vibrant community of food lovers and let your recipes inspire others!</p>
+                    <a href="{% url 'viewrecipie' %}" class="inline-block px-6 py-2 font-semibold text-orange-500 bg-white rounded-full shadow-lg transition-all duration-300 transform hover:bg-orange-100 hover:scale-105 hover:shadow-xl md:px-8 md:py-3">
+                        Explore Recipes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Decorative Elements -->
+            <div class="absolute top-10 right-10 w-24 h-24 rounded-full bg-white/10 floating md:w-32 md:h-32"></div>
+            <div class="absolute bottom-10 left-10 w-20 h-20 rounded-full bg-white/10 floating md:w-24 md:h-24" style="animation-delay: -1s"></div>
+            <div class="absolute top-1/2 left-1/4 w-12 h-12 rounded-full bg-white/10 floating md:w-16 md:h-16" style="animation-delay: -2s"></div>
+        </div>
+    </div>
+
+    <script>
+        function recipeForm() {
+            return {
+                recipe: {
+                    title: '',
+                    description: '',
+                    servings: '',
+                    prepTime: '',
+                    calories: '',
+                    difficulty: '',
+                    mealType: [],
+                    cuisine: [],
+                    dietaryRestrictions: [],
+                    ingredients: [{ name: '', quantity: '', unit: '' }],
+                    instructions: [{ step: '' }],
+                    image: null
+                },
+                mealTypes: [
+                    { id: 1, name: 'Breakfast' },
+                    { id: 2, name: 'Lunch' },
+                    { id: 3, name: 'Dinner' },
+                    { id: 4, name: 'Snack' }
+                ],
+                cuisines: [
+                    { id: 1, name: 'Italian' },
+                    { id: 2, name: 'Chinese' },
+                    { id: 3, name: 'Mexican' },
+                    { id: 4, name: 'Indian' }
+                ],
+                dietaryRestrictions: [
+                    { id: 1, name: 'Vegetarian' },
+                    { id: 2, name: 'Vegan' },
+                    { id: 3, name: 'Gluten-Free' },
+                    { id: 4, name: 'Dairy-Free' }
+                ],
+                addIngredient() {
+                    this.recipe.ingredients.push({ name: '', quantity: '', unit: '' });
+                    this.$nextTick(() => {
+                        gsap.from(this.$refs.ingredientsContainer.lastElementChild, {
+                            opacity: 0,
+                            y: 20,
+                            duration: 0.5
+                        });
+                    });
+                },
+                removeIngredient(index) {
+                    if (this.recipe.ingredients.length > 1) {
+                        this.recipe.ingredients.splice(index, 1);
+                    }
+                },
+                addInstruction() {
+                    this.recipe.instructions.push({ step: '' });
+                    this.$nextTick(() => {
+                        gsap.from(this.$refs.instructionsContainer.lastElementChild, {
+                            opacity: 0,
+                            y: 20,
+                            duration: 0.5
+                        });
+                    });
+                },
+                removeInstruction(index) {
+                    if (this.recipe.instructions.length > 1) {
+                        this.recipe.instructions.splice(index, 1);
+                    }
+                },
+                handleImageUpload(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        this.recipe.image = file;
+                    }
+                },
+                submitForm() {
+                    // Here you would typically send the data to your server
+                    console.log('Submitting recipe:', this.recipe);
+                    // Show a success message or redirect
+                    alert('Recipe submitted successfully!');
+                }
+            }
+        }
+
+        // Particle animation
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.width = `${Math.random() * 10 + 5}px`;
+            particle.style.height = particle.style.width;
+            particle.style.background = `hsl(${Math.random() * 60 + 10}, 100%, 75%)`;
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = `${Math.random() * 100}vh`;
+            particlesContainer.appendChild(particle);
+
+            gsap.to(particle, {
+                x: `random(-100, 100)`,
+                y: `random(-100, 100)`,
+                duration: `random(3, 6)`,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut'
+            });
+        }
+    </script>
+    <script>
+        function addIngredient() {
+            const container = document.getElementById('ingredients-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'grid grid-cols-5 gap-4';
+            newRow.innerHTML = `
+                <input type="text" name="ingredient_name[]" required
+                       class="col-span-2 px-4 py-3 rounded-lg border-2 border-gray-300"
+                       placeholder="Ingredient name">
+                <input type="text" name="ingredient_quantity[]" required
+                       class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                       placeholder="Amount">
+                <input type="text" name="ingredient_unit[]"
+                       class="px-4 py-3 rounded-lg border-2 border-gray-300"
+                       placeholder="Unit">
+                <button type="button" onclick="removeIngredient(this)"
+                        class="px-4 py-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newRow);
+        }
+    
+        function removeIngredient(button) {
+            const container = document.getElementById('ingredients-container');
+            if (container.children.length > 1) {
+                button.closest('.grid').remove();
+            }
+        }
+    
+        function addInstruction() {
+            const container = document.getElementById('instructions-container');
+            const stepNumber = container.children.length + 1;
+            const newRow = document.createElement('div');
+            newRow.className = 'relative flex items-center';
+            newRow.innerHTML = `
+                <div class="absolute top-0 left-0 mt-3 ml-3 text-gray-400">Step ${stepNumber}</div>
+                <textarea name="instructions[]" required rows="2"
+                          class="block pl-20 w-full rounded-lg border-2 border-gray-300"
+                          placeholder="Describe this step..."></textarea>
+                <button type="button" onclick="removeInstruction(this)"
+                        class="px-4 py-2 ml-2 text-red-500 rounded-lg border border-red-500 hover:bg-red-50">
+                    Remove
+                </button>
+            `;
+            container.appendChild(newRow);
+        }
+    
+        function removeInstruction(button) {
+            const container = document.getElementById('instructions-container');
+            if (container.children.length > 1) {
+                button.closest('.relative').remove();
+                // Update step numbers
+                container.querySelectorAll('.absolute').forEach((step, index) => {
+                    step.textContent = `Step ${index + 1}`;
+                });
+            }
+        }
+    
+        // Add initial rows
+        window.addEventListener('load', function() {
+            addIngredient();
+            addInstruction();
+        });
+    </script>
+</body>
+</html>
