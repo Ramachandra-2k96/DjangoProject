@@ -1,0 +1,4 @@
+chmod +x init-ssl.sh
+sudo ./init-ssl.sh
+
+docker-compose up -d --build

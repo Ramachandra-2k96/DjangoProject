@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8f^fgyx627jc7apldr7m#od4c0=dsmz^p=!9v$f%3zaq(2j@ct'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
 
 import os
 # Application definition
@@ -56,9 +56,8 @@ CORS_ALLOW_ALL_ORIGINS = True  # Only use this for development
 CORS_ALLOW_CREDENTIALS = True
 # If you want to specify specific origins instead of allowing all:
 CORS_ALLOWED_ORIGINS = [
-    "https://9e46-2409-40f2-3007-20f5-a8ba-61e2-f87e-7d75.ngrok-free.app",
-    "http://localhost:8000",  # Add your frontend local development server
-    "http://127.0.0.1:8000",
+    'https://recipes.thecodewithrama.co.in',
+    'https://www.recipes.thecodewithrama.co.in',
 ]
 ROOT_URLCONF = 'Backend.urls'
 
@@ -128,13 +127,24 @@ LOGIN_URL = 'login'
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),  # Ensure Django knows where static files are
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Security settings
+DEBUG = False
+ALLOWED_HOSTS = ['yourdomain.com', 'www.yourdomain.com']
+
+# HTTPS settings
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# HSTS settings
+SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_PRELOAD = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
